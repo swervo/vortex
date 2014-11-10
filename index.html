@@ -11,12 +11,6 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <link rel="stylesheet" href="css/reset.css">
         <link rel="stylesheet" href="css/styles.css">
-        <script src="lib/zepto.js" type="text/javascript"></script>
-        <script src="lib/event.js" type="text/javascript"></script>
-        <script src="lib/touch.js" type="text/javascript"></script>
-        <script src="lib/detect.js" type="text/javascript"></script>
-        <script src="scripts/main.js" type="text/javascript"></script>
-        <script src="scripts/canvasAnim.js" type="text/javascript"></script>
     </head>
     <body>
         <article>
@@ -28,7 +22,7 @@
                     <span class="secondName nameText">Butler</span>
                 </div>
                 <div class="separator"></div>
-                <div class="carousel">
+                <div id="carousel" class="carousel">
                     <div>
                         <img src="assets/thumbs/ruho.jpg">
                     </div>
@@ -63,4 +57,7 @@
             </footer>
         </article>
     </body>
+        <script src="scripts/canvasAnim.js" type="text/javascript"></script>
+        <script src="scripts/platformCheck.js" type="text/javascript"></script>
+        <script src="scripts/main.js" type="text/javascript"></script>
 </html>

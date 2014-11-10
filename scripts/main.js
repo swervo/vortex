@@ -1,32 +1,42 @@
-var vortexApp = {
-    utils: {},
-    canvas: {}
-};
+/* global vortexApp */
+/* global Event: false */
 
 (function(thisApp) {
     "use strict";
     var
     // references
-    viewIndex, pos, dragImgSrc,
+    viewIndex, dragImgSrc, pos,
     // state variables
     isDragging, startX, startY, isInVortex,
     // individual elements
-    carousel, textEntryBox, sendButton, sendTextForm, expandable,
-    dragImage, dragWrapper, currentItem;
+    carousel, textEntryBox,
+    sendButton, sendTextForm, expandable,
+    dragImage, dragWrapper, currentItem,
+    // events
+    swipeLeft, swipeRight;
     
     function init() {
-        var showText, endZoomIn, preventScroll, swipeDirection, swipeObj = {};
+        var swipeObj = {};
+
         function showText() {
-            var vText = textEntryBox[0].value;
-            textEntryBox[0].value = "";
-            textEntryBox[0].blur();
+            var vText = textEntryBox.value;
+            if (!vText) {
+                expandable.style.textAlign = "center";
+                vText = "Put something in the text box below.<br>" +
+                "<span style='font-size:30px; line-height:1'>&</span><br>" +
+                "then press send.<br>";
+            } else {
+                expandable.style.textAlign = "left";
+            }
+            textEntryBox.value = "";
+            textEntryBox.blur();
             expandable.innerHTML = "<span class='" + "editorText" + "' >" + vText + "</span>";
             expandable.addEventListener("webkitAnimationEnd", endZoomIn);
             expandable.style.webkitAnimationName = "warpOne";
             thisApp.canvas.warp();
             
         }
-        
+
         function endZoomIn() {
             expandable.removeEventListener("webkitAnimationEnd", endZoomIn);
             expandable.style.webkitAnimationName =  "";
@@ -34,25 +44,26 @@ var vortexApp = {
         }
 
         function preventScroll() {
-            $("body").bind(thisApp.utils.touchmove, function(e){
+            document.body.addEventListener(thisApp.utils.touchmove, function(e){
                 e.preventDefault();
             });
+        }
+
+        function swipeTest(e) {
+            swipeObj.x2 = e.pageX;
+            swipeObj.y2 = e.pageY;
+            
+            carousel.removeEventListener("mouseup");
+            var event = (swipeDirection(swipeObj.x1, swipeObj.x2, swipeObj.y1, swipeObj.y2) === "Left")
+                ? swipeLeft : swipeRight;
+            carousel.dispatchEvent(event);
         }
 
         function startSwipe(e) {
             e.preventDefault();
             swipeObj.x1 = e.pageX;
             swipeObj.y1 = e.pageY;
-            carousel.bind("mouseup", function(e){
-                swipeObj.x2 = e.pageX;
-                swipeObj.y2 = e.pageY;
-                
-                carousel.unbind("mouseup");
-                carousel.trigger("swipe" + swipeDirection(swipeObj.x1, swipeObj.x2,
-                    swipeObj.y1, swipeObj.y2));
-                
-            });
-            // carousel.trigger("swipeLeft");
+            carousel.addEventListener("mouseup", swipeTest);
         }
         
         function swipeDirection(x1, x2, y1, y2) {
@@ -61,63 +72,72 @@ var vortexApp = {
                 return (x1 - x2 > 0 ? "Left" : "Right");
             }
         }
-        
-        
-        pos = $("header .carousel div:nth-child(3)").offset();
-        textEntryBox = $("#message");
-        sendButton = $("#send");
-        sendTextForm = $("#sendTextForm");
+
+        function getPosObject(element) {
+            var clientRect = element.getBoundingClientRect();
+            return {
+                left: clientRect.left + document.body.scrollLeft,
+                top: clientRect.top + document.body.scrollTop
+            };
+        }
+
+        pos = getPosObject(document.querySelector("header .carousel div:nth-child(3)"));
+        textEntryBox = document.getElementById("message");
+        sendButton = document.getElementById("send");
+        sendTextForm = document.getElementById("sendTextForm");
         expandable = document.getElementById("expandable");
-        sendButton.bind("click", function(){
+        sendButton.addEventListener("click", function(){
             showText();
         });
         //event listeners
-        sendTextForm.bind("submit", function(e){
+        sendTextForm.addEventListener("submit", function(e){
             e.preventDefault();
             showText();
         });
-        
-        carousel = $(".carousel").swipeLeft(function(e){
+
+        carousel = document.getElementById("carousel");
+
+        swipeLeft = new Event("swipeLeft");
+
+        swipeRight = new Event("swipeRight");
+        carousel.addEventListener("swipeLeft", function(e){
             removeImageDrag(e);
             switchImage(true);
-        }).swipeRight(function(e){
+        });
+        carousel.addEventListener("swipeRight", function(e){
             removeImageDrag(e);
             switchImage(false);
         });
+
         
         if (!thisApp.utils.isMobile) {
             // my own hacky mouse based swipings
-            carousel.bind("mousedown", startSwipe);
+            carousel.addEventListener("mousedown", startSwipe);
         }
         
-        // console.log(thisApp.utils.touchstart);
-        currentItem = $("header .carousel div:nth-child(3)").bind(thisApp.utils.touchstart, dragStart);
+        currentItem = document.querySelector("header .carousel div:nth-child(3)");
+        currentItem.addEventListener(thisApp.utils.touchstart, dragStart);
         
         preventScroll();
     }
     
     function endSendPicture() {
-        dragWrapper.unbind("webkitTransitionEnd", endSendPicture);
-        dragWrapper.css({
-            "-webkit-transform": "translateX(" + pos.left + "px)" + " translateY(" + pos.top + "px)",
-            "-webkit-transition-duration": "100ms"
-        });
+        dragWrapper.removeEventListener("webkitTransitionEnd", endSendPicture);
+        dragWrapper.style.webkitTransitionDuration = "100ms";
+        dragWrapper.style.webkitTransform = "translateX(" + pos.left + "px)"
+            + " translateY(" + pos.top + "px)";
         setTimeout(function() {
-            // dragWrapper = $(dragWrapper.remove());
             dragWrapper.remove();
             thisApp.canvas.wane();
         }, 0);
     }
     
     function resetPicture() {
-        console.log("calling resetPicture");
-        dragWrapper.unbind("webkitTransitionEnd", resetPicture);
-        dragWrapper.css({
-            "-webkit-transform": "translateX(" + pos.left + "px)" + " translateY(" + pos.top + "px)",
-            "-webkit-transition-duration": "100ms"
-        });
+        dragWrapper.removeEventListener("webkitTransitionEnd", resetPicture);
+        dragWrapper.style.webkitTransitionDuration = "100ms";
+        dragWrapper.style.webkitTransform = "translateX(" + pos.left + "px)"
+            + " translateY(" + pos.top + "px)";
         setTimeout(function() {
-            // dragWrapper = $(dragWrapper.remove());
             dragWrapper.remove();
         }, 0);
     }
@@ -125,11 +145,12 @@ var vortexApp = {
     
     function removeImageDrag(e) {
         e.preventDefault();
-        currentItem.unbind(thisApp.utils.touchstart, dragStart);
+        currentItem.removeEventListener(thisApp.utils.touchstart, dragStart);
     }
     
     function addImageDrag() {
-        currentItem = $("header .carousel div:nth-child(3)").bind(thisApp.utils.touchstart, dragStart);
+        currentItem = document.querySelector("header .carousel div:nth-child(3)");
+        currentItem.addEventListener(thisApp.utils.touchstart, dragStart);
     }
     
     function dragStart(e) {
@@ -144,13 +165,12 @@ var vortexApp = {
             touchObj = e;
             e.preventDefault();
         }
-        // e.targetTouches[0].stopPropagation();
 
         // get the coordinates of the touch here
         startX = touchObj.pageX;
         startY = touchObj.pageY;
         dragImgSrc = touchObj.target.src;
-        currentItem.bind(thisApp.utils.touchmove, dragMove);
+        currentItem.addEventListener(thisApp.utils.touchmove, dragMove);
     }
     
     function dragMove(e) {
@@ -166,59 +186,58 @@ var vortexApp = {
         if (!isDragging) {
             isDragging = true;
             if (!dragImage) {
-                dragWrapper = $(document.createElement("div"));
-                dragImage = $(document.createElement("img"));
-                dragWrapper.addClass("dragWrapper");
-                dragImage.addClass("dragImage").attr("src", dragImgSrc);
-                dragWrapper.append(dragImage);
+                dragWrapper = document.createElement("div");
+                dragImage = document.createElement("img");
+                dragWrapper.classList.add("dragWrapper");
+                dragImage.classList.add("dragImage");
+                dragImage.setAttribute("src", dragImgSrc);
+                dragWrapper.appendChild(dragImage);
             } else {
-                dragImage.attr("src", dragImgSrc);
+                dragImage.setAttribute("src", dragImgSrc);
             }
-            $("body").append(dragWrapper);
+            document.body.appendChild(dragWrapper);
             if (!thisApp.utils.isMobile) {
                 //remove the original eventmove handler
-                currentItem.unbind(thisApp.utils.touchmove, dragMove);
+                currentItem.removeEventListener(thisApp.utils.touchmove, dragMove);
                 // add a handler for the mousemove
-                dragWrapper.bind(thisApp.utils.touchmove, dragMove);
-                dragWrapper.bind(thisApp.utils.touchend, dragEnd);
+                dragWrapper.addEventListener(thisApp.utils.touchmove, dragMove);
+                dragWrapper.addEventListener(thisApp.utils.touchend, dragEnd);
             } else {
                 // seems that you cannot add the touchend event to the generated element
                 // hence adding it to the original element
                 // unlike mouse events touch events are broadcast to all subscribed elements
                 // subscribed elements don't even need to be the target of the event
-                currentItem.bind(thisApp.utils.touchend, dragEnd);
+                currentItem.addEventListener(thisApp.utils.touchend, dragEnd);
             }
         }
         
         dX = touchObj.pageX - startX;
         dY = touchObj.pageY - startY;
-        dragWrapper.css("-webkit-transform", "translate(" + (pos.left + dX) + "px," + (pos.top + dY) + "px)");
-        // this.element.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
+        dragWrapper.style.webkitTransform = "translate(" + (pos.left + dX) +
+            "px," + (pos.top + dY) + "px)";
         if (touchObj.pageY > 300) {
             // it's in the vortex
             if (!isInVortex) {
                 isInVortex = true;
                 // add vortex styling
-                dragImage.addClass("inVortex");
+                dragImage.classList.add("inVortex");
             }
         } else {
             if (isInVortex) {
                 isInVortex = false;
                 // remove vortex styling
-                dragImage.removeClass("inVortex");
+                dragImage.classList.remove("inVortex");
             }
         }
     }
     
     function dragEnd() {
         if (thisApp.utils.isMobile) {
-            // $(this).unbind(thisApp.utils.touchmove);
-            currentItem.unbind(thisApp.utils.touchmove, dragMove);
-            currentItem.unbind(thisApp.utils.touchend, dragEnd);
-            // $(this).unbind(thisApp.utils.touchend);
+            currentItem.removeEventListener(thisApp.utils.touchmove, dragMove);
+            currentItem.removeEventListener(thisApp.utils.touchend, dragEnd);
         } else {
-            dragWrapper.unbind(thisApp.utils.touchmove, dragMove);
-            dragWrapper.unbind(thisApp.utils.touchend, dragEnd);
+            dragWrapper.removeEventListener(thisApp.utils.touchmove, dragMove);
+            dragWrapper.removeEventListener(thisApp.utils.touchend, dragEnd);
         }
         
 
@@ -229,23 +248,20 @@ var vortexApp = {
         // snap the image back to where it was and then destroy it.
     
         if (isInVortex) {
-            dragImage.removeClass("inVortex");
-            dragWrapper.bind("webkitTransitionEnd", endSendPicture);
+            dragImage.classList.remove("inVortex");
+            dragWrapper.addEventListener("webkitTransitionEnd", endSendPicture);
             vortexApp.canvas.warp();
             setTimeout(function() {
-                dragWrapper.css({
-                    "-webkit-transform": "translate(160px, 360px) scale(0.01)",
-                    "-webkit-transition-duration": "500ms"
-                });
+                dragWrapper.style.webkitTransitionDuration = "500ms";
+                dragWrapper.style.webkitTransform = "translate(160px, 360px) scale(0.01)";
             }, 0);
             // send image down pipe here
         } else {
-            dragWrapper.bind("webkitTransitionEnd", resetPicture);
+            dragWrapper.addEventListener("webkitTransitionEnd", resetPicture);
             setTimeout(function() {
-                dragWrapper.css({
-                    "-webkit-transform": "translateX(" + pos.left + "px)" + " translateY(" + pos.top + "px)",
-                    "-webkit-transition-duration": "100ms"
-                });
+                dragWrapper.style.webkitTransitionDuration = "100ms";
+                dragWrapper.style.webkitTransform = "translateX(" + pos.left + "px)"
+                    + " translateY(" + pos.top + "px)";
             }, 0);
         }
     }
@@ -268,20 +284,21 @@ var vortexApp = {
     
     
     function switchImage(aIsNext) {
-        var refView = $(".carousel div").get(0), targetImage;
+        var refView = document.querySelector(".carousel div"), targetImage;
         if (aIsNext) {
             incViewIndex(true);
             refView.parentNode.appendChild(refView);
         } else {
             incViewIndex(false);
-            targetImage = $(".carousel div").last().get(0);
+            targetImage = document.querySelector(".carousel div:last-child");
             refView.parentNode.insertBefore(targetImage, refView);
         }
         addImageDrag();
     }
     
     function addUtils(obj) {
-        obj.isMobile = ($.os.ios || $.os.android || $.os.webos) ? true : false;
+        obj.isMobile = (vortexApp.platform.os.ios ||
+            vortexApp.platform.os.android) ? true : false;
         obj.touchstart = obj.isMobile ? "touchstart" : "mousedown";
         obj.touchmove = obj.isMobile ? "touchmove" : "mousemove";
         obj.touchend = obj.isMobile ? "touchend" : "mouseup";
@@ -292,9 +309,8 @@ var vortexApp = {
         addUtils(thisApp.utils);
         init();
         thisApp.canvas.initCanvas();
-        // initialise the utils
     };
 
 })(vortexApp);
 
-$("body").ready(vortexApp.init);
+vortexApp.init();

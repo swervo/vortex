@@ -1,3 +1,9 @@
+var vortexApp = {
+    utils: {},
+    canvas: {},
+    platform: {}
+};
+
 (function(thisAppCanvas) {
     "use strict";
 
@@ -13,7 +19,7 @@
     
     function init() {
         
-        theCanvas = $("canvas").get(0);
+        theCanvas = document.getElementById("vortex");
         context = theCanvas.getContext("2d");
         particleImage = new Image();
         particleImage.src = "assets/particle.png";
