@@ -20,16 +20,16 @@ var vortexApp = {
             var vText = textEntryBox[0].value;
             textEntryBox[0].value = "";
             textEntryBox[0].blur();
-            expandable.html("<span class='" + "editorText" + "' >" + vText + "</span>");
-            expandable.bind("webkitAnimationEnd", endZoomIn);
-            expandable.css("-webkit-animation-name", "warpOne");
+            expandable.innerHTML = "<span class='" + "editorText" + "' >" + vText + "</span>";
+            expandable.addEventListener("webkitAnimationEnd", endZoomIn);
+            expandable.style.webkitAnimationName = "warpOne";
             thisApp.canvas.warp();
             
         }
+        
         function endZoomIn() {
-            expandable.unbind("webkitAnimationEnd", endZoomIn);
-            // expandable.bind("webkitAnimationEnd", endEnterVortex);
-            expandable.css("-webkit-animation-name", "none");
+            expandable.removeEventListener("webkitAnimationEnd", endZoomIn);
+            expandable.style.webkitAnimationName =  "";
             thisApp.canvas.wane();
         }
 
@@ -67,7 +67,7 @@ var vortexApp = {
         textEntryBox = $("#message");
         sendButton = $("#send");
         sendTextForm = $("#sendTextForm");
-        expandable = $("#expandable");
+        expandable = document.getElementById("expandable");
         sendButton.bind("click", function(){
             showText();
         });
