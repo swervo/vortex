@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <head>
+        <title>The vortex</title>
+        <meta charset="utf-8">
+        <!-- Mobile Viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <!-- iOS Full Screen -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <!-- iOS Status Bar Style (default, black, black-translucent) -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/styles.css">
+        <script src="lib/zepto.js" type="text/javascript"></script>
+        <script src="lib/event.js" type="text/javascript"></script>
+        <script src="lib/touch.js" type="text/javascript"></script>
+        <script src="lib/detect.js" type="text/javascript"></script>
+        <script src="scripts/main.js" type="text/javascript"></script>
+        <script src="scripts/canvasAnim.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <article>
+            <header>
+                <div class="starBurst"></div>
+                <div class="persona">
+                    <img src="assets/portrait.jpg">
+                    <span class="firstName nameText">Dominic</span>
+                    <span class="secondName nameText">Butler</span>
+                </div>
+                <div class="separator"></div>
+                <div class="carousel">
+                    <div>
+                        <img src="assets/thumbs/ruho.jpg">
+                    </div>
+                    <div>
+                        <img src="assets/thumbs/piglet.jpg">
+                    </div>
+                    <div>
+                        <img src="assets/thumbs/stelly.jpg">
+                    </div>
+                    <div>
+                        <img src="assets/thumbs/dutchHouse.jpg">
+                    </div>
+                    <div>
+                        <img src="assets/thumbs/fintje.jpg">
+                    </div>
+                </div>
+                <div class="highlight flipVertical"></div>
+            </header>
+            
+            <div id="main" class="main">
+                <canvas id="vortex" class="vortex" width="320" height="120"></canvas>
+                <div id="expandable" class="expandable">
+                    <span class="editorText">Hello world?</span>
+                </div>
+            </div>
+            <footer>
+                <div class="highlight"></div>
+                <span id="send" class="buttonText">Send</span>
+                <form id="sendTextForm">
+                    <input type="text" name="message" id="message" class="editorText" autocorrect placeholder="Send me a message&hellip;" />
+                </form>
+            </footer>
+        </article>
+    </body>
+</html>
