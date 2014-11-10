@@ -50,26 +50,39 @@
         }
 
         function swipeTest(e) {
+            if (thisApp.utils.isMobile) {
+                e = e.changedTouches[0];
+            }
             swipeObj.x2 = e.pageX;
             swipeObj.y2 = e.pageY;
             
-            carousel.removeEventListener("mouseup");
-            var event = (swipeDirection(swipeObj.x1, swipeObj.x2, swipeObj.y1, swipeObj.y2) === "Left")
-                ? swipeLeft : swipeRight;
-            carousel.dispatchEvent(event);
+            carousel.removeEventListener(thisApp.utils.touchend);
+            var event = swipeDirection(swipeObj.x1, swipeObj.x2, swipeObj.y1, swipeObj.y2);
+            if (event) {
+                if (event === "Left") {
+                    carousel.dispatchEvent(swipeLeft);
+                } else {
+                    carousel.dispatchEvent(swipeRight);
+                }
+            }
         }
 
         function startSwipe(e) {
             e.preventDefault();
+            if (thisApp.utils.isMobile) {
+                e = e.targetTouches[0];
+            }
             swipeObj.x1 = e.pageX;
             swipeObj.y1 = e.pageY;
-            carousel.addEventListener("mouseup", swipeTest);
+            carousel.addEventListener(thisApp.utils.touchend, swipeTest, true);
         }
         
         function swipeDirection(x1, x2, y1, y2) {
             var yDelta = Math.abs(y1 - y2);
             if (yDelta < 50) {
                 return (x1 - x2 > 0 ? "Left" : "Right");
+            } else {
+                return false;
             }
         }
 
@@ -110,10 +123,8 @@
         });
 
         
-        if (!thisApp.utils.isMobile) {
-            // my own hacky mouse based swipings
-            carousel.addEventListener("mousedown", startSwipe);
-        }
+        // my own hacky mouse based swipings
+        carousel.addEventListener(thisApp.utils.touchstart, startSwipe, true);
         
         currentItem = document.querySelector("header .carousel div:nth-child(3)");
         currentItem.addEventListener(thisApp.utils.touchstart, dragStart);
@@ -164,6 +175,7 @@
         } else {
             touchObj = e;
             e.preventDefault();
+            e.stopPropagation();
         }
 
         // get the coordinates of the touch here
@@ -174,7 +186,6 @@
     }
     
     function dragMove(e) {
-        // console.log("calling");
         var touchObj, dX, dY;
         if (thisApp.utils.isMobile) {
             touchObj = e.changedTouches[0];
@@ -293,7 +304,7 @@
             targetImage = document.querySelector(".carousel div:last-child");
             refView.parentNode.insertBefore(targetImage, refView);
         }
-        addImageDrag();
+        setTimeout(addImageDrag, 0);
     }
     
     function addUtils(obj) {
