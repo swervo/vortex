@@ -51,14 +51,6 @@
 
 /* helper classes */
 
-.removed {
-    display: none;
-}
-
-.hidden {
-    visibility: none;
-}
-
 .flipVertical {
     -webkit-transform: matrix(1, 0, 0, -1, 0, 0);
 }
