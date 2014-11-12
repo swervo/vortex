@@ -22,7 +22,8 @@ Embedded in [testrig][1] available here:
 
 ## Notes
 * Designed using Fireworks initially (source png included in assets directory).
-Initially designed for iPhone 4 resolution (HVGA), later amended to scale to other form factors providing some responsivity.
+* Initially designed for iPhone 4 resolution (HVGA).
+* Later amended to scale to other form factors providing some responsivity.
 
 ## Limitations
 * Webkit only.
