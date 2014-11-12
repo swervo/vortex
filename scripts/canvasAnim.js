@@ -28,7 +28,7 @@ var vortexApp = {
         // set the anim speed to moderate
         animSpeed = 4;
         
-        context.translate(160, 60);
+        context.translate(160, 115);
         
         for(var i = 0 ; i < 20; i++) {
             // make a random point
@@ -63,7 +63,7 @@ var vortexApp = {
 
         // context.fillStyle="rgba(0,0,0,0.1)";
         context.fillStyle = fillStyle;
-        context.fillRect(-160,-60, 320, 120);
+        context.fillRect(-160,-115, 320, 230);
       
         context.globalCompositeOperation = "lighter";
         context.globalAlpha = 0.9;

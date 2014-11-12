@@ -76,7 +76,7 @@
             swipeObj.y1 = e.pageY;
             carousel.addEventListener(thisApp.utils.touchend, swipeTest, true);
         }
-        
+
         function swipeDirection(x1, x2, y1, y2) {
             var yDelta = Math.abs(y1 - y2);
             if (yDelta < 50) {
@@ -94,11 +94,16 @@
             };
         }
 
-        pos = getPosObject(document.querySelector("header .carousel div:nth-child(3)"));
+        function updatePos() {
+            pos = getPosObject(document.querySelector("header .carousel div:nth-child(3)"));
+        }
+
         textEntryBox = document.getElementById("message");
         sendButton = document.getElementById("send");
         sendTextForm = document.getElementById("sendTextForm");
         expandable = document.getElementById("expandable");
+        carousel = document.getElementById("carousel");
+
         sendButton.addEventListener("click", function(){
             showText();
         });
@@ -108,11 +113,16 @@
             showText();
         });
 
-        carousel = document.getElementById("carousel");
+        window.addEventListener("resize", updatePos);
+        window.addEventListener("message", function(e) {
+            if (e.data === "frameResize") {
+                updatePos();
+            }
+        });
 
         swipeLeft = new Event("swipeLeft");
-
         swipeRight = new Event("swipeRight");
+
         carousel.addEventListener("swipeLeft", function(e){
             removeImageDrag(e);
             switchImage(true);
@@ -122,7 +132,6 @@
             switchImage(false);
         });
 
-        
         // my own hacky mouse based swipings
         carousel.addEventListener(thisApp.utils.touchstart, startSwipe, true);
         
@@ -130,8 +139,9 @@
         currentItem.addEventListener(thisApp.utils.touchstart, dragStart);
         
         preventScroll();
+        updatePos();
     }
-    
+
     function endSendPicture() {
         dragWrapper.removeEventListener("webkitTransitionEnd", endSendPicture);
         dragWrapper.style.webkitTransitionDuration = "100ms";
@@ -142,7 +152,7 @@
             thisApp.canvas.wane();
         }, 0);
     }
-    
+
     function resetPicture() {
         dragWrapper.removeEventListener("webkitTransitionEnd", resetPicture);
         dragWrapper.style.webkitTransitionDuration = "100ms";
@@ -152,8 +162,8 @@
             dragWrapper.remove();
         }, 0);
     }
-    
-    
+
+
     function removeImageDrag(e) {
         e.preventDefault();
         currentItem.removeEventListener(thisApp.utils.touchstart, dragStart);
