@@ -9,7 +9,7 @@ var vortexApp = {
 
     var
     // elements
-    theCanvas, context, particleImage,
+    context, particleImage,
     // containers
     pointArray = [],
     // variables
@@ -19,8 +19,8 @@ var vortexApp = {
     
     function init() {
         
-        theCanvas = document.getElementById("vortex");
-        context = theCanvas.getContext("2d");
+        thisAppCanvas.vortex = document.getElementById("vortex");
+        context = thisAppCanvas.vortex.getContext("2d");
         particleImage = new Image();
         particleImage.src = "assets/particle.png";
         // set the fill style to solid black initially;
@@ -99,7 +99,7 @@ var vortexApp = {
         }
     };
                 
-    function draw3Din2D(p3d, c) {
+    function draw3Din2D(p3d) {
         // first, work out how small it should be
         // using the z pos ( how far away it is :) )
         var scale = FOV/(FOV + p3d.z);
@@ -146,7 +146,7 @@ var vortexApp = {
                 if (animSpeed > 4) {
                     animSpeed--;
                 }
-                fillStyle = "rgba(0,0,0," + alpha++/10 + ")";
+                fillStyle = "rgba(0,0,0," + (alpha++)/10 + ")";
             } else {
                 fillStyle = "rgb(0,0,0)";
                 animSpeed = 4;

@@ -5,7 +5,7 @@
     "use strict";
     var
     // references
-    viewIndex, dragImgSrc, pos,
+    viewIndex, dragImgSrc, pos, vPos,
     // state variables
     isDragging, startX, startY, isInVortex,
     // individual elements
@@ -94,8 +94,18 @@
             };
         }
 
+        function getVanishingPoint() {
+            // This is the middle of the vortex
+            var canvas = thisApp.canvas.vortex.getBoundingClientRect();
+            return {
+                left: canvas.width/2,
+                top: canvas.height/2 + 300
+            };
+        }
+
         function updatePos() {
             pos = getPosObject(document.querySelector("header .carousel div:nth-child(3)"));
+            vPos = getVanishingPoint();
         }
 
         textEntryBox = document.getElementById("message");
@@ -272,11 +282,12 @@
             dragImage.classList.remove("inVortex");
             dragWrapper.addEventListener("webkitTransitionEnd", endSendPicture);
             vortexApp.canvas.warp();
+            // send image down pipe here
             setTimeout(function() {
                 dragWrapper.style.webkitTransitionDuration = "500ms";
-                dragWrapper.style.webkitTransform = "translate(160px, 360px) scale(0.01)";
+                dragWrapper.style.webkitTransform = "translate(" + vPos.left
+                    + "px," + vPos.top + "px) scale(0.01)";
             }, 0);
-            // send image down pipe here
         } else {
             dragWrapper.addEventListener("webkitTransitionEnd", resetPicture);
             setTimeout(function() {
@@ -328,8 +339,8 @@
     
     thisApp.init = function() {
         addUtils(thisApp.utils);
-        init();
         thisApp.canvas.initCanvas();
+        init();
     };
 
 })(vortexApp);
