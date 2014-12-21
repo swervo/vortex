@@ -13,6 +13,7 @@
         <link rel="apple-touch-icon" sizes="144x144" href="http://www.papersnail.co.uk/images/icons/Icon-72@2x.png"/>
         <!-- iOS Status Bar Style (default, black, black-translucent) -->
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <link href='http://fonts.googleapis.com/css?family=Oxygen:300,400,700' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="css/reset.css">
         <link rel="stylesheet" href="css/styles.css">
     </head>
@@ -21,27 +22,27 @@
         <div class="app">
             <header>
                 <div class="starBurst"></div>
-                <div class="persona">
-                    <img src="assets/portrait.jpg">
-                    <span class="firstName nameText">Dominic</span>
-                    <span class="secondName nameText">Butler</span>
+                <div class="Persona">
+                    <img src="assets/portrait.jpg" class="Persona--thumb">
+                    <span class="Persona--firstName nameText">Dominic</span>
+                    <span class="Persona--secondName nameText">Butler</span>
                 </div>
                 <div class="separator"></div>
-                <div id="carousel" class="carousel">
-                    <div>
-                        <img src="assets/thumbs/ruho.jpg">
+                <div id="carousel" class="Carousel">
+                    <div class="Carousel--item">
+                        <img src="assets/thumbs/ruho.jpg" class="Carousel--item--thumb">
                     </div>
-                    <div>
-                        <img src="assets/thumbs/piglet.jpg">
+                    <div class="Carousel--item">
+                        <img src="assets/thumbs/piglet.jpg" class="Carousel--item--thumb">
                     </div>
-                    <div>
-                        <img src="assets/thumbs/stelly.jpg">
+                    <div class="Carousel--item">
+                        <img src="assets/thumbs/stelly.jpg" class="Carousel--item--thumb">
                     </div>
-                    <div>
-                        <img src="assets/thumbs/dutchHouse.jpg">
+                    <div class="Carousel--item">
+                        <img src="assets/thumbs/dutchHouse.jpg" class="Carousel--item--thumb">
                     </div>
-                    <div>
-                        <img src="assets/thumbs/fintje.jpg">
+                    <div class="Carousel--item">
+                        <img src="assets/thumbs/fintje.jpg" class="Carousel--item--thumb">
                     </div>
                 </div>
                 <div class="highlight flipVertical"></div>
@@ -53,11 +54,11 @@
                     <span class="editorText">Hello world?</span>
                 </div>
             </div>
-            <footer>
+            <footer class="MessageConsole">
                 <div class="highlight"></div>
-                <span id="send" class="buttonText">Send</span>
-                <form id="sendTextForm">
-                    <input type="text" name="message" id="message" class="editorText" autocorrect placeholder="Send me a message&hellip;" />
+                <button id="send" class="MessageConsole--send buttonText">Send</button>
+                <form id="sendTextForm" class="MessageConsole--form">
+                    <input type="text" name="message" id="message" class="MessageConsole--field editorText" autocorrect placeholder="Send me a message&hellip;" />
                 </form>
             </footer>
         </div>

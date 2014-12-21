@@ -104,7 +104,7 @@
         }
 
         function updatePos() {
-            pos = getPosObject(document.querySelector("header .carousel div:nth-child(3)"));
+            pos = getPosObject(document.querySelector(".Carousel--item:nth-child(3)"));
             vPos = getVanishingPoint();
         }
 
@@ -145,7 +145,7 @@
         // my own hacky mouse based swipings
         carousel.addEventListener(thisApp.utils.touchstart, startSwipe, true);
         
-        currentItem = document.querySelector("header .carousel div:nth-child(3)");
+        currentItem = document.querySelector(".Carousel--item:nth-child(3)");
         currentItem.addEventListener(thisApp.utils.touchstart, dragStart);
         
         preventScroll();
@@ -180,7 +180,7 @@
     }
     
     function addImageDrag() {
-        currentItem = document.querySelector("header .carousel div:nth-child(3)");
+        currentItem = document.querySelector(".Carousel--item:nth-child(3)");
         currentItem.addEventListener(thisApp.utils.touchstart, dragStart);
     }
     
@@ -316,13 +316,13 @@
     
     
     function switchImage(aIsNext) {
-        var refView = document.querySelector(".carousel div"), targetImage;
+        var refView = document.querySelector(".Carousel--item"), targetImage;
         if (aIsNext) {
             incViewIndex(true);
             refView.parentNode.appendChild(refView);
         } else {
             incViewIndex(false);
-            targetImage = document.querySelector(".carousel div:last-child");
+            targetImage = document.querySelector(".Carousel--item:last-child");
             refView.parentNode.insertBefore(targetImage, refView);
         }
         setTimeout(addImageDrag, 0);
